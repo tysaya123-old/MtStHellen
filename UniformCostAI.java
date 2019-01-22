@@ -50,7 +50,6 @@ public class UniformCostAI implements AIModule
                 for(Point p : neighbors){
                 	if(visited.get(p.toString()) == null){
 	                    double height = map.getTile(p);
-	                    //double cost = getCost(currNode.getElev(),height);
 	                    double cost = map.getCost(currPoint, p);
 	                    //TODO: Add heruistic
 	                    queue.add(currNode.nextNode(p, cost, getHeuristic(map, p, EndPoint), height));
@@ -68,10 +67,6 @@ public class UniformCostAI implements AIModule
 
         return 0;
 
-    }
-
-    private double getCost(double h1, double h2){
-        return Math.pow(2.0,h1 - h2);
     }
 
 

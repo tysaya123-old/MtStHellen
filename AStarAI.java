@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Hashtable;
-
 /// First AI h = 0.
 
 public class AStarAI implements AIModule
 {
     
-
     /// Creates the path to the goal.
     public List<Point> createPath(final TerrainMap map)
     {
@@ -58,17 +56,72 @@ public class AStarAI implements AIModule
                 }
             }
         }
-
-        System.out.println("uhoh");
         return null;
     }
 
 
     private double getHeuristic(TerrainMap map, Point pt1, Point pt2, double h1, double h2){
-    	//Double maxSteps =(Double) Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
-    	if(h2>=h1) {
-    		return 1;
-    	}
-    	else return 0;
+    	if(h2>=h1) return 1;
+    	return 0;
+//    	Double maxSteps =(Double) Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
+//    	Double maxDiff = 256.0;
+//    	if(h2>h1) {
+//    		return maxSteps*Math.pow( 2, (h2-h1)/maxSteps );
+//    	}
+//    	else return maxSteps*Math.pow( 2, maxDiff/maxSteps );
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    private class Node implements Comparable<Node>{
+    	private ArrayList<Point> path;
+    	private double g;
+    	private double h;
+    	private double currElev;
+
+    	public Node(ArrayList<Point> p, double g, double h, double e){
+    		path = p;
+    		this.g = g;
+    		this.h = h;
+    		currElev = e;
+    	}
+
+    	public ArrayList<Point> getPath(){ return path; }
+    	public Point getPoint(){ return path.get(path.size()-1); }
+    	public double getG(){ return g; }
+    	public double getH(){ return h; }
+    	public double getElev() { return currElev; }
+    	public double getTotal(){ return g+h; }
+
+    	//public void setPath(ArrayList<Point> p){ path = p; }
+    	// public void setG(double n){ g = n; }
+    	// public void setH(double n){ h = n; }
+
+    	public Node nextNode(Point p, double dist, double heur, double elev){
+    		ArrayList<Point> nextAr = new ArrayList<Point>(path);
+    		nextAr.add(p);
+    		return new Node(nextAr, g+dist, heur, elev);
+    	}
+
+    	public String toString(){
+    		return path.get(path.size() - 1).toString();
+    	}
+
+    	@Override
+    	public int compareTo(Node other){
+    		double diff = getTotal() - other.getTotal();
+    		if(diff > 0) return 1;
+    		if(diff == 0) return 0;
+    		else return -1;
+    	}
+    }
+
 }
+
+
+

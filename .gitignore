@@ -13,3 +13,5 @@
 /TerrainMap$MovementType.class
 /TerrainMap.class
 /UniformCostAI.class
+/AStarAI$Node.class
+/NodeData.class
