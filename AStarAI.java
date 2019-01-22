@@ -20,12 +20,13 @@ public class AStarAI implements AIModule
         // Keep track of where we are and add the start point.
         final Point StartPoint = map.getStartPoint();
         final Point EndPoint = map.getEndPoint();
+        final Double StartHeight = map.getTile(StartPoint);
         final Double EndHeight = map.getTile(EndPoint);
         
         ArrayList<Point> path = new ArrayList<Point>();
         path.add(new Point(StartPoint));
 
-        queue.add(new Node(path, 0, getHeuristic(map, StartPoint, EndPoint, map.getTile(StartPoint), EndHeight), map.getTile(StartPoint)));
+        queue.add(new Node(path, 0, getHeuristic(map, StartPoint, EndPoint, StartHeight, EndHeight), StartHeight));
         
 
         Node currNode;
@@ -51,9 +52,7 @@ public class AStarAI implements AIModule
                 for(Point p : neighbors){
                 	if(visited.get(p.toString()) == null){
 	                    double height = map.getTile(p);
-	                    //double cost = getCost(currNode.getElev(),height);
 	                    double cost = map.getCost(currPoint, p);
-	                    //TODO: Add heruistic
 	                    queue.add(currNode.nextNode(p, cost, getHeuristic(map, p, EndPoint, height, EndHeight), height));
                 	}
                 }
@@ -66,16 +65,10 @@ public class AStarAI implements AIModule
 
 
     private double getHeuristic(TerrainMap map, Point pt1, Point pt2, double h1, double h2){
-    	Double maxSteps =(Double) Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
-    	if(h2>h1) {
-    		return maxSteps*Math.pow(2, (h2-h1)/maxSteps);
+    	//Double maxSteps =(Double) Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
+    	if(h2>=h1) {
+    		return 1;
     	}
     	else return 0;
     }
-
-    private double getCost(double h1, double h2){
-        return Math.pow(2.0,h1 - h2);
-    }
-
-
 }
