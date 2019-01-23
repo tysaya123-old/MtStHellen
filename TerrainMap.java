@@ -356,6 +356,8 @@ public final class TerrainMap
 
         for(int index = 0; index < path.size() - 1; index++)
         {
+//        	System.out.println(path.get(index));
+//        	System.out.println(getCost(path.get(index), path.get(index + 1)));
             PathCost += getCost(path.get(index), path.get(index + 1));
         }
         

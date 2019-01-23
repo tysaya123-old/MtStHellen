@@ -16,3 +16,5 @@
 /AStarAI$Node.class
 /NodeData.class
 /UniformCostAI$Node.class
+/BiDiAStarAI.class
+/BiDiAStarAI$Node.class
