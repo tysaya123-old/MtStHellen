@@ -3,6 +3,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
+
 import java.util.Hashtable;
 /// First AI h = 0.
 
@@ -13,7 +14,7 @@ public class AStarAI implements AIModule
     public List<Point> createPath(final TerrainMap map)
     {
         PriorityQueue<Node> queue = new PriorityQueue<Node>();
-        Hashtable<String, Point> visited = new Hashtable<String, Point>();
+        Hashtable<String, Node> visited = new Hashtable<String, Node>();
 
         // Keep track of where we are and add the start point.
         final Point StartPoint = map.getStartPoint();
@@ -31,7 +32,8 @@ public class AStarAI implements AIModule
         Point currPoint;
         Point[] neighbors;
 
-        while(queue.peek() != null){
+        while(true){
+        	if(!findNextUnvisited(queue, visited)) return null;
             currNode = queue.remove();
             currPoint = currNode.getPoint();
             
@@ -41,25 +43,36 @@ public class AStarAI implements AIModule
             }
             
             //Check if already visited.
-            //TODO: Be sure we know at shortest with our Heruistic
             if(visited.get(currPoint.toString()) == null){
                 //add to hash
-                visited.put(currPoint.toString(), currPoint);
-                
+                visited.put(currPoint.toString(), currNode);
+
                 neighbors = map.getNeighbors(currPoint);
-                for(Point p : neighbors){
-                	if(visited.get(p.toString()) == null){
-	                    double height = map.getTile(p);
-	                    double cost = map.getCost(currPoint, p);
-	                    queue.add(currNode.nextNode(p, cost, getHeuristic(map, p, EndPoint, height, EndHeight), height));
-                	}
-                }
+                addNeighbors(map, queue, visited, neighbors, currNode, EndPoint);
             }
         }
-        return null;
     }
 
-
+	private boolean findNextUnvisited(PriorityQueue<Node> queue, Hashtable<String, Node> visited) {
+    	Node currNode;
+    	while(true) {
+    		if(queue.peek() == null) return false;
+    		else if(visited.get(queue.peek().getPoint().toString()) == null) return true;
+    		else queue.remove();
+    	}
+    }
+    
+    private void addNeighbors(final TerrainMap map, PriorityQueue<Node> queue, Hashtable<String, Node> visited, Point[] neighbors, Node currNode, Point goal) {
+    	for(Point p : neighbors){
+        	if(visited.get(p.toString()) == null){
+                double height = map.getTile(p);
+                double cost = map.getCost(currNode.getPoint(), p);
+                queue.add(currNode.nextNode(p, cost, getHeuristic(map, p, goal, height, map.getTile(goal)), height));
+        	}
+        }
+    	return;
+	}
+    
     private double getHeuristic(TerrainMap map, Point pt1, Point pt2, double h1, double h2){
 
     	Double chebyDist =Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
