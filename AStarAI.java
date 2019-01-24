@@ -61,12 +61,11 @@ public class AStarAI implements AIModule
 
 
     private double getHeuristic(TerrainMap map, Point pt1, Point pt2, double h1, double h2){
-//    	if(h2>=h1) return 1;
-//    	return 0;
+
     	Double chebyDist =Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
     	Double maxH = 255.0;
     	Double maxW = 500.0;
-//    	
+
     	return chebyDist*Math.pow(2.0, (h2-h1)/chebyDist);
     }
     
