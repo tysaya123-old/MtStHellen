@@ -79,7 +79,7 @@ public class AStarAI implements AIModule
     	Double maxH = 255.0;
     	Double maxW = 500.0;
 
-    	return chebyDist*Math.pow(2.0, (h2-h1)/chebyDist);
+    	return chebyDist*Math.pow(2.0, (h2-h1-1)/chebyDist);
     }
     
     
