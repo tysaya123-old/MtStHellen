@@ -19,13 +19,11 @@ public class AStarAI implements AIModule
         // Keep track of where we are and add the start point.
         final Point StartPoint = map.getStartPoint();
         final Point EndPoint = map.getEndPoint();
-        final Double StartHeight = map.getTile(StartPoint);
-        final Double EndHeight = map.getTile(EndPoint);
         
         ArrayList<Point> path = new ArrayList<Point>();
         path.add(new Point(StartPoint));
 
-        queue.add(new Node(path, 0, getHeuristic(map, StartPoint, EndPoint, StartHeight, EndHeight), StartHeight));
+        queue.add(new Node(path, 0, getHeuristic(map, StartPoint, EndPoint)));
         
 
         Node currNode;
@@ -54,7 +52,6 @@ public class AStarAI implements AIModule
     }
 
 	private boolean findNextUnvisited(PriorityQueue<Node> queue, Hashtable<String, Node> visited) {
-    	Node currNode;
     	while(true) {
     		if(queue.peek() == null) return false;
     		else if(visited.get(queue.peek().getPoint().toString()) == null) return true;
@@ -65,21 +62,28 @@ public class AStarAI implements AIModule
     private void addNeighbors(final TerrainMap map, PriorityQueue<Node> queue, Hashtable<String, Node> visited, Point[] neighbors, Node currNode, Point goal) {
     	for(Point p : neighbors){
         	if(visited.get(p.toString()) == null){
-                double height = map.getTile(p);
-                double cost = map.getCost(currNode.getPoint(), p);
-                queue.add(currNode.nextNode(p, cost, getHeuristic(map, p, goal, height, map.getTile(goal)), height));
+                queue.add(currNode.nextNode(p, map.getCost(currNode.getPoint(), p), getHeuristic(map, p, goal)));
         	}
         }
     	return;
 	}
     
-    private double getHeuristic(TerrainMap map, Point pt1, Point pt2, double h1, double h2){
-
-    	Double chebyDist =Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
-    	Double maxH = 255.0;
-    	Double maxW = 500.0;
-
+    private double getHeuristic(final TerrainMap map,final Point pt1, final Point pt2){
+    	
+    	Double chebyDist = Math.max(Math.abs(pt1.getX()-pt2.getX()), Math.abs(pt1.getY()-pt2.getY()));
+    	Double h1 = map.getTile(pt1);
+    	Double h2 = map.getTile(pt2);
+    	
     	return chebyDist*Math.pow(2.0, (h2-h1-1)/chebyDist);
+//    	double sum = 0.0;
+//    	double deltaH = (h2 - h1)/chebyDist;
+//    	for(int i = 0; i < chebyDist; i++) {
+//    		sum+= (h1+deltaH*i)/(h1+deltaH*(i+1) + 1);
+//    	}
+//    	
+//    	double downUp = h1 + chebyDist/2 - 1;
+//    	
+//    	return Math.min(downUp, sum);
     }
     
     
@@ -93,30 +97,26 @@ public class AStarAI implements AIModule
     	private ArrayList<Point> path;
     	private double g;
     	private double h;
-    	private double currElev;
 
-    	public Node(ArrayList<Point> p, double g, double h, double e){
+    	public Node(ArrayList<Point> p, double g, double h){
     		path = p;
     		this.g = g;
     		this.h = h;
-    		currElev = e;
     	}
 
     	public ArrayList<Point> getPath(){ return path; }
     	public Point getPoint(){ return path.get(path.size()-1); }
     	public double getG(){ return g; }
-    	public double getH(){ return h; }
-    	public double getElev() { return currElev; }
     	public double getTotal(){ return g+h; }
 
     	//public void setPath(ArrayList<Point> p){ path = p; }
     	// public void setG(double n){ g = n; }
     	// public void setH(double n){ h = n; }
 
-    	public Node nextNode(Point p, double dist, double heur, double elev){
+    	public Node nextNode(Point p, double dist, double heur){
     		ArrayList<Point> nextAr = new ArrayList<Point>(path);
     		nextAr.add(p);
-    		return new Node(nextAr, g+dist, heur, elev);
+    		return new Node(nextAr, g+dist, heur);
     	}
 
     	public String toString(){

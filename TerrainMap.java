@@ -283,7 +283,7 @@ public final class TerrainMap
     {
          // Only use of the the following dependent on question
          //return (double) (getTile(p1)) /  ( (double) getTile(p2)+1.0);
-	return Math.pow(2.0,getTile(p2) - getTile(p1));
+         return Math.pow(2.0,getTile(p2) - getTile(p1));
     }
     
     /// Returns the width of the map.
